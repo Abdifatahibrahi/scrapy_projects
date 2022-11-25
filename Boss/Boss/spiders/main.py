@@ -2,9 +2,13 @@ import scrapy
 
 
 class ScratchQuotes(scrapy.Spider):
-    name = 'boss'
-    start_urls = ['https://www.imdb.com/chart/top/']
+    name = 'quotes'
+    start_urls = ['https://quotes.toscrape.com/']
 
 
     def parse(self, response):
-        pass
+        for div in response.css('.quote'):
+            yield {
+                'quote': div.css('.text::text').get(),
+                'author': div.css('.author::text').get()
+            }
