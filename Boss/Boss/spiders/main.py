@@ -8,7 +8,14 @@ class ScratchQuotes(scrapy.Spider):
 
     def parse(self, response):
         for div in response.css('.quote'):
+            quotes = div.css('.text::text').get()
             yield {
-                'quote': div.css('.text::text').get(),
+                'quote': quotes.replace('“', '').replace('”', ''),
                 'author': div.css('.author::text').get()
             }
+
+        next_url = response.css('li.next a::attr(href)').get()
+
+        if next_url:
+            yield response.follow(next_url, callback=self.parse)
+
